@@ -23,8 +23,9 @@ tabs.forEach((tab) => {
     const target = tab.dataset.tab;
 
     tabs.forEach((item) => {
-      item.classList.toggle('active', item === tab);
-      item.setAttribute('aria-selected', String(item === tab));
+      const isActive = item === tab;
+      item.classList.toggle('active', isActive);
+      item.setAttribute('aria-selected', String(isActive));
     });
 
     courses.forEach((course) => {
@@ -34,19 +35,18 @@ tabs.forEach((tab) => {
 });
 
 const form = document.querySelector('[data-form]');
-const formNote = document.querySelector('[data-form-note]');
+const note = document.querySelector('[data-form-note]');
 
-if (form && formNote) {
+if (form && note) {
   form.addEventListener('submit', (event) => {
     event.preventDefault();
-
     const data = new FormData(form);
     const parent = data.get('parent');
     const age = data.get('age');
     const contact = data.get('contact');
 
-    formNote.textContent = `Заявка подготовлена: ${parent}, ${age}, контакт: ${contact}. Подключите отправку в Telegram, на почту или в CRM.`;
-    formNote.classList.add('success');
+    note.textContent = `Координаты приняты: ${parent}, ${age}, связь: ${contact}. Подключите Telegram‑бота или почту для реальной отправки.`;
+    note.classList.add('success');
     form.reset();
   });
 }
