@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>РобоСтарт — робототехника для детей</title>
+  <meta name="description" content="Кружок робототехники для детей 7–15 лет: Arduino, электроника, 3D-моделирование, программирование и инженерные проекты.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav container">
+      <a class="logo" href="#top" aria-label="РобоСтарт">
+        <span class="logo-mark">⚙</span>
+        <span>РобоСтарт</span>
+      </a>
+      <button class="menu-button" aria-label="Открыть меню" aria-expanded="false">☰</button>
+      <div class="nav-links" data-nav>
+        <a href="#courses">Курсы</a>
+        <a href="#projects">Проекты</a>
+        <a href="#format">Формат</a>
+        <a href="#pricing">Стоимость</a>
+        <a class="nav-cta" href="#signup">Записаться</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <p class="eyebrow">Инженерный кружок для детей 7–15 лет</p>
+          <h1>Учимся собирать роботов, программировать и думать как инженеры</h1>
+          <p class="hero-text">
+            На занятиях дети работают с Arduino, датчиками, моторами, 3D‑моделями и реальными проектами:
+            от простого светофора до робота, который объезжает препятствия.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#signup">Записать ребёнка</a>
+            <a class="button secondary" href="#projects">Посмотреть проекты</a>
+          </div>
+          <div class="hero-stats" aria-label="Преимущества">
+            <div><strong>80%</strong><span>практики</span></div>
+            <div><strong>7–15</strong><span>лет</span></div>
+            <div><strong>1–2</strong><span>занятия в неделю</span></div>
+          </div>
+        </div>
+
+        <div class="hero-card" aria-label="Иллюстрация занятия робототехникой">
+          <div class="robot">
+            <div class="antenna"></div>
+            <div class="robot-head">
+              <span></span><span></span>
+            </div>
+            <div class="robot-body">
+              <div class="screen">1010</div>
+              <div class="buttons"><i></i><i></i><i></i></div>
+            </div>
+            <div class="wheels"><b></b><b></b></div>
+          </div>
+          <div class="floating-card card-a">Arduino</div>
+          <div class="floating-card card-b">3D‑модели</div>
+          <div class="floating-card card-c">Датчики</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section container">
+      <div class="section-heading">
+        <p class="eyebrow">Почему детям нравится</p>
+        <h2>Каждое занятие заканчивается видимым результатом</h2>
+      </div>
+      <div class="benefits">
+        <article>
+          <span class="icon">🧩</span>
+          <h3>Объясняем простым языком</h3>
+          <p>Сложные темы разбираются через игру, сборку и эксперименты.</p>
+        </article>
+        <article>
+          <span class="icon">🔌</span>
+          <h3>Работаем руками</h3>
+          <p>Паяльник не обязателен: начинаем с макетных плат, проводов и готовых модулей.</p>
+        </article>
+        <article>
+          <span class="icon">🚗</span>
+          <h3>Делаем настоящих роботов</h3>
+          <p>Светофоры, сигнализации, машинки, манипуляторы и автономные устройства.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section courses-section" id="courses">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Программа обучения</p>
+          <h2>Курсы по возрасту и уровню</h2>
+        </div>
+
+        <div class="course-tabs" role="tablist" aria-label="Курсы">
+          <button class="tab active" data-tab="junior" role="tab" aria-selected="true">7–9 лет</button>
+          <button class="tab" data-tab="middle" role="tab" aria-selected="false">10–12 лет</button>
+          <button class="tab" data-tab="senior" role="tab" aria-selected="false">13–15 лет</button>
+        </div>
+
+        <div class="course-card active" data-course="junior">
+          <div>
+            <h3>Робототехника через игру</h3>
+            <p>Знакомство с логикой, простыми механизмами, датчиками и алгоритмами.</p>
+            <ul>
+              <li>Первые схемы и безопасная электроника</li>
+              <li>Моторы, кнопки, светодиоды, звук</li>
+              <li>Командные мини‑соревнования</li>
+            </ul>
+          </div>
+          <aside>Итог: ребёнок собирает интерактивную игрушку или простого робота.</aside>
+        </div>
+
+        <div class="course-card" data-course="middle">
+          <div>
+            <h3>Arduino и инженерные проекты</h3>
+            <p>Дети учатся читать схемы, писать код и отлаживать устройства.</p>
+            <ul>
+              <li>Arduino Nano/Uno, датчики расстояния, ИК‑пульты</li>
+              <li>Дисплеи, сервоприводы, моторы, питание</li>
+              <li>Проектирование корпуса и сборка прототипа</li>
+            </ul>
+          </div>
+          <aside>Итог: автономная машинка, таймер, сигнализация или умная станция.</aside>
+        </div>
+
+        <div class="course-card" data-course="senior">
+          <div>
+            <h3>Роботы, код и 3D‑моделирование</h3>
+            <p>Больше самостоятельности: от идеи и чертежа до рабочей демонстрации.</p>
+            <ul>
+              <li>Основы C/C++, Python и логика программ</li>
+              <li>Проектирование деталей и подготовка к изготовлению</li>
+              <li>Командная разработка и презентация проекта</li>
+            </ul>
+          </div>
+          <aside>Итог: защищённый инженерный проект с кодом, схемой и корпусом.</aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="section container" id="projects">
+      <div class="section-heading">
+        <p class="eyebrow">Что будем собирать</p>
+        <h2>Примеры проектов</h2>
+      </div>
+      <div class="project-grid">
+        <article class="project-card">
+          <div class="project-emoji">🚦</div>
+          <h3>Умный светофор</h3>
+          <p>Светодиоды, кнопка пешехода, таймер и простая логика состояний.</p>
+        </article>
+        <article class="project-card">
+          <div class="project-emoji">📏</div>
+          <h3>Радар расстояния</h3>
+          <p>Ультразвуковой датчик, дисплей и звуковая индикация.</p>
+        </article>
+        <article class="project-card">
+          <div class="project-emoji">🤖</div>
+          <h3>Робот‑объездчик</h3>
+          <p>Моторы, драйвер, датчик препятствий и алгоритм движения.</p>
+        </article>
+        <article class="project-card">
+          <div class="project-emoji">🌱</div>
+          <h3>Мини‑теплица</h3>
+          <p>Датчики влажности, освещение, вентиляция и автоматический режим.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section format-section" id="format">
+      <div class="container format-grid">
+        <div>
+          <p class="eyebrow">Как проходят занятия</p>
+          <h2>Меньше лекций — больше сборки</h2>
+          <p>
+            Каждая тема проходит по схеме: короткое объяснение → сборка → программирование →
+            проверка → улучшение проекта. Дети видят ошибки, исправляют их и понимают,
+            как работает устройство.
+          </p>
+        </div>
+        <div class="steps">
+          <div><span>01</span><strong>Идея</strong><p>Разбираем задачу и показываем пример.</p></div>
+          <div><span>02</span><strong>Сборка</strong><p>Подключаем модули, датчики и питание.</p></div>
+          <div><span>03</span><strong>Код</strong><p>Пишем программу и учимся отладке.</p></div>
+          <div><span>04</span><strong>Демо</strong><p>Проверяем, улучшаем и показываем результат.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section container" id="pricing">
+      <div class="section-heading">
+        <p class="eyebrow">Форматы</p>
+        <h2>Выберите удобный вариант</h2>
+      </div>
+      <div class="pricing">
+        <article>
+          <h3>Пробное занятие</h3>
+          <p class="price">Бесплатно</p>
+          <p>45–60 минут, знакомство с преподавателем и первым проектом.</p>
+          <a class="button secondary" href="#signup">Оставить заявку</a>
+        </article>
+        <article class="featured">
+          <span class="badge">Популярно</span>
+          <h3>Группа</h3>
+          <p class="price">от 4 500 ₽/мес.</p>
+          <p>1–2 занятия в неделю, мини‑группа, общие соревнования и проекты.</p>
+          <a class="button primary" href="#signup">Записаться</a>
+        </article>
+        <article>
+          <h3>Индивидуально</h3>
+          <p class="price">по запросу</p>
+          <p>Темп и программа под ребёнка: Arduino, 3D, Python или проект.</p>
+          <a class="button secondary" href="#signup">Обсудить</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="section signup-section" id="signup">
+      <div class="container signup-grid">
+        <div>
+          <p class="eyebrow">Запись</p>
+          <h2>Оставьте заявку на пробное занятие</h2>
+          <p>
+            Мы свяжемся, уточним возраст ребёнка, уровень подготовки и предложим подходящую группу.
+          </p>
+          <div class="contact-box">
+            <p><strong>Телефон:</strong> +7 (___) ___‑__‑__</p>
+            <p><strong>Адрес:</strong> ваш город, улица, кабинет</p>
+            <p><strong>Telegram:</strong> @your_robot_school</p>
+          </div>
+        </div>
+
+        <form class="signup-form" data-form>
+          <label>
+            Имя родителя
+            <input type="text" name="parent" placeholder="Например, Андрей" required>
+          </label>
+          <label>
+            Возраст ребёнка
+            <select name="age" required>
+              <option value="">Выберите возраст</option>
+              <option>7–9 лет</option>
+              <option>10–12 лет</option>
+              <option>13–15 лет</option>
+            </select>
+          </label>
+          <label>
+            Телефон или Telegram
+            <input type="text" name="contact" placeholder="+7... или @nickname" required>
+          </label>
+          <label>
+            Комментарий
+            <textarea name="message" rows="4" placeholder="Что ребёнку интересно: роботы, Arduino, 3D, программирование..."></textarea>
+          </label>
+          <button class="button primary" type="submit">Отправить заявку</button>
+          <p class="form-note" data-form-note>Форма демонстрационная. Для реального сайта подключите Telegram‑бот, почту или CRM.</p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-grid">
+      <p>© 2026 РобоСтарт. Обучение робототехнике для детей.</p>
+      <a href="#top">Наверх ↑</a>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
