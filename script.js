@@ -15,6 +15,19 @@ if (menuButton && nav) {
   });
 }
 
+const priceCards = document.querySelectorAll('.price-card');
+
+priceCards.forEach((card) => {
+  const title = card.querySelector('h3');
+  const link = card.querySelector('a.button');
+
+  if (title && link && title.textContent.trim() === 'Пробная миссия') {
+    link.href = 'trial-mission.html';
+    link.textContent = 'Что входит';
+    link.setAttribute('aria-label', 'Открыть описание пробной миссии');
+  }
+});
+
 const tabs = document.querySelectorAll('[data-tab]');
 const courses = document.querySelectorAll('[data-course]');
 
