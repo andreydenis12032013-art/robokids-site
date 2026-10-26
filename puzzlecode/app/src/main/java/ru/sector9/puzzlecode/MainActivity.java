@@ -17,9 +17,6 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ArrayAdapter;
-import android.widget.AdapterView;
-import android.widget.Spinner;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -41,7 +38,7 @@ public final class MainActivity extends Activity {
     private TextView info;
     private EditText codeField;
     private Button solveButton, resetButton;
-    private Spinner gridPicker;
+    private Button grid4Button, grid100Button;
     private int gridSize = 4;
     private String imageCrc = null;
     private int[][] pendingSteps;
@@ -84,35 +81,27 @@ public final class MainActivity extends Activity {
         scroll.addView(root);
         setContentView(scroll);
 
-        TextView title = text("PuzzleCode 2.2", 25, Config.ACCENT);
+        TextView title = text("PuzzleCode 2.3", 25, Config.ACCENT);
         title.setPadding(0, 0, 0, dp(8));
         root.addView(title);
 
         TextView help = text("Загрузи перемешанный PNG из чата. Меняй местами фрагменты, а затем вставь код для автоматической сборки.", 14, Config.TEXT);
         root.addView(help);
 
-        gridPicker = new Spinner(this);
-        String[] sizes = {"4×4 — 16 фрагментов", "100×100 — 10 000 фрагментов"};
-        ArrayAdapter<String> sizesAdapter = new ArrayAdapter<>(
-            this, android.R.layout.simple_spinner_item, sizes);
-        sizesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        gridPicker.setAdapter(sizesAdapter);
-        root.addView(gridPicker);
-        gridPicker.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override public void onNothingSelected(AdapterView<?> parent) { }
-            @Override public void onItemSelected(AdapterView<?> parent, View v, int pos, long id) {
-                int wanted = pos == 0 ? 4 : 100;
-                if (gridSize == wanted) return;
-                if (busy) return;
-                gridSize = wanted;
-                imageCrc = null;
-                if (board != null) board.clearImageAndChangeGrid(wanted);
-                if (codeField != null) codeField.setHint(wanted == 4 ? "PZ1.4. ..." : "PZ2.100.XXXXXXXX.CRC32");
-                updateControls();
-                status("Сетка " + wanted + "×" + wanted +
-                       ". Открой PNG, стороны которого делятся на " + wanted + ".");
-            }
-        });
+        // Two large, always-visible buttons replace the Android spinner.
+        // The spinner's black label was invisible on the dark background.
+        TextView gridLabel = text("Размер сетки:", 16, Config.TEXT);
+        gridLabel.setPadding(0, dp(12), 0, dp(4));
+        root.addView(gridLabel);
+        LinearLayout gridRow = new LinearLayout(this);
+        gridRow.setOrientation(LinearLayout.HORIZONTAL);
+        grid4Button = button("✓ 4×4 (16)");
+        grid100Button = button("100×100 (10 000)");
+        gridRow.addView(grid4Button, new LinearLayout.LayoutParams(0, dp(56), 1f));
+        gridRow.addView(grid100Button, new LinearLayout.LayoutParams(0, dp(56), 1.7f));
+        root.addView(gridRow);
+        grid4Button.setOnClickListener(v -> selectGrid(4));
+        grid100Button.setOnClickListener(v -> selectGrid(100));
         Button open = button("Открыть PNG из телефона");
         root.addView(open);
         open.setOnClickListener(v -> chooseFile());
@@ -170,6 +159,7 @@ public final class MainActivity extends Activity {
         info = text("Открой PNG, чтобы начать.", 14, Config.ACCENT);
         info.setPadding(dp(6), dp(15), dp(6), dp(8));
         root.addView(info);
+        refreshGridButtons();
         updateControls();
     }
 
@@ -183,7 +173,43 @@ public final class MainActivity extends Activity {
         if (resetButton != null) resetButton.setEnabled(loaded && !busy);
         if (codeField != null) codeField.setEnabled(!busy);
         if (board != null) board.setBusy(busy);
-        if (gridPicker != null) gridPicker.setEnabled(!busy);
+        if (grid4Button != null) grid4Button.setEnabled(!busy);
+        if (grid100Button != null) grid100Button.setEnabled(!busy);
+    }
+
+    /** Switch grid without losing the file/CRC; clear only manual moves.
+     * That allows an already uploaded PNG to be used immediately with its code.
+     */
+    private boolean selectGrid(int wanted) {
+        if (busy || (wanted != 4 && wanted != 100)) return false;
+        if (board != null && board.hasImage()) {
+            // Android currently stores the decompressed image in memory.
+            if (board.image.getWidth() % wanted != 0 ||
+                board.image.getHeight() % wanted != 0) {
+                status("Изображение не делится на " + wanted + " по каждой стороне.");
+                return false;
+            }
+        }
+        if (gridSize == wanted) return true;
+        gridSize = wanted;
+        if (board != null) board.changeGridKeepingPicture(wanted);
+        if (codeField != null)
+            codeField.setHint(wanted == 4 ? "PZ1.4. ..." : "PZ2.100.XXXXXXXX.CRC32");
+        refreshGridButtons();
+        updateControls();
+        status("Выбран режим " + wanted + "×" + wanted +
+               ". Ручные перестановки сброшены; PNG остался загруженным.");
+        return true;
+    }
+
+    private void refreshGridButtons() {
+        if (grid4Button != null) {
+            grid4Button.setText(gridSize == 4 ? "✓ 4×4 (16)" : "4×4 (16)");
+        }
+        if (grid100Button != null) {
+            grid100Button.setText(gridSize == 100 ?
+                   "✓ 100×100 (10 000)" : "100×100 (10 000)");
+        }
     }
 
     /** Android's document picker handles storage permissions on Android 16. */
@@ -240,7 +266,14 @@ public final class MainActivity extends Activity {
     private void startSolving() {
         if (busy || !board.hasImage()) return;
         try {
-            int[] permutation = PuzzleCodec.decode(codeField.getText().toString(), gridSize, imageCrc);
+            // Infer the grid directly from the code; there is no need to
+            // locate a tiny dropdown to choose 100x100.
+            String entered = codeField.getText().toString().replaceAll("\\s+", "");
+            int requested = gridSize;
+            if (entered.startsWith("PZ2.100.")) requested = 100;
+            else if (entered.startsWith("PZ1.4.")) requested = 4;
+            if (requested != gridSize && !selectGrid(requested)) return;
+            int[] permutation = PuzzleCodec.decode(entered, gridSize, imageCrc);
             pendingSteps = PuzzleCodec.swapsToSolve(board.copyTiles(), permutation);
             if (pendingSteps.length == 0) {
                 board.showGrid(false);
@@ -325,9 +358,8 @@ public final class MainActivity extends Activity {
         void setBusy(boolean b) { blocked = b; }
         void showGrid(boolean show) { grid = show; invalidate(); }
 
-        void clearImageAndChangeGrid(int newN) {
-            if (image != null) image.recycle();
-            image = null;
+        /** Keep the PNG and its CRC when changing the size of the grid. */
+        void changeGridKeepingPicture(int newN) {
             n = newN;
             tiles = new int[n*n];
             reset();
