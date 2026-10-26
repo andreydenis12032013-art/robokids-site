@@ -38,6 +38,14 @@ jobs:
       - name: Install Android API 35
         run: sdkmanager --install "platforms;android-35" "build-tools;35.0.0"
 
+      - name: Test permutations (4x4 and 100x100)
+        run: |
+          mkdir -p /tmp/puzzlecode-test-classes
+          javac -d /tmp/puzzlecode-test-classes \
+            puzzlecode/app/src/main/java/ru/sector9/puzzlecode/PuzzleCodec.java \
+            puzzlecode/tests/PuzzleCodecSmokeTest.java
+          java -cp /tmp/puzzlecode-test-classes ru.sector9.puzzlecode.PuzzleCodecSmokeTest
+
       - name: Build fully from source
         working-directory: puzzlecode
         run: gradle --no-daemon clean assembleDebug
