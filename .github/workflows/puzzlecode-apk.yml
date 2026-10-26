@@ -56,3 +56,23 @@ jobs:
           path: puzzlecode/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30
+
+
+      - name: Create official Gradle wrapper
+        working-directory: puzzlecode
+        run: gradle --no-daemon wrapper --gradle-version 8.11.1
+
+      - name: Package full reproducible Android source
+        run: |
+          mkdir -p source-export/PuzzleCode
+          cp -R puzzlecode/. source-export/PuzzleCode/
+          rm -rf source-export/PuzzleCode/.gradle source-export/PuzzleCode/app/build source-export/PuzzleCode/build
+          cd source-export && zip -qr ../PuzzleCode_v2.1_Source.zip PuzzleCode
+
+      - name: Upload source project ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: PuzzleCode-Full-Source
+          path: PuzzleCode_v2.1_Source.zip
+          if-no-files-found: error
+          retention-days: 30
