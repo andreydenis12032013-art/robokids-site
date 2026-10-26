@@ -81,7 +81,7 @@ public final class MainActivity extends Activity {
         scroll.addView(root);
         setContentView(scroll);
 
-        TextView title = text("PuzzleCode 2.3", 25, Config.ACCENT);
+        TextView title = text("PuzzleCode 2.4", 25, Config.ACCENT);
         title.setPadding(0, 0, 0, dp(8));
         root.addView(title);
 
@@ -318,6 +318,7 @@ public final class MainActivity extends Activity {
 
     @Override protected void onDestroy() {
         handler.removeCallbacks(nextStep);
+        if (board != null) board.releaseBitmaps();
         super.onDestroy();
     }
 
@@ -330,6 +331,7 @@ public final class MainActivity extends Activity {
      */
     private final class PuzzleBoard extends View {
         private Bitmap image;
+        private Bitmap assembledBitmap; // Single seam-free bitmap shown after solving.
         private int[] tiles = new int[16];
         private int n = 4;
         private final Paint bitmapPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
@@ -356,7 +358,61 @@ public final class MainActivity extends Activity {
         boolean hasImage() { return image != null && !image.isRecycled(); }
         int[] copyTiles() { return tiles.clone(); }
         void setBusy(boolean b) { blocked = b; }
-        void showGrid(boolean show) { grid = show; invalidate(); }
+
+        /** Delete the cached final image whenever the puzzle tiles change. */
+        private void clearAssembledBitmap() {
+            if (assembledBitmap != null) {
+                assembledBitmap.recycle();
+                assembledBitmap = null;
+            }
+        }
+
+        void releaseBitmaps() {
+            clearAssembledBitmap();
+            if (image != null) {
+                image.recycle();
+                image = null;
+            }
+        }
+
+        /**
+         * After a successful solve, stitch all tiles into ONE bitmap with
+         * integer pixel coordinates. Rendering individual tiles causes
+         * subpixel seams / a fake dark 100x100 grid on some GPU drivers.
+         */
+        private void buildSeamlessResult() {
+            clearAssembledBitmap();
+            if (!hasImage()) return;
+
+            final int width = image.getWidth(), height = image.getHeight();
+            Bitmap stitched = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            Canvas offscreen = new Canvas(stitched);
+            Paint pixelPaint = new Paint();
+            pixelPaint.setAntiAlias(false);
+            pixelPaint.setFilterBitmap(false);
+            for (int slot = 0; slot < tiles.length; slot++) {
+                int tile = tiles[slot];
+                Rect from = new Rect(
+                        (tile % n) * width / n,
+                        (tile / n) * height / n,
+                        (tile % n + 1) * width / n,
+                        (tile / n + 1) * height / n);
+                Rect to = new Rect(
+                        (slot % n) * width / n,
+                        (slot / n) * height / n,
+                        (slot % n + 1) * width / n,
+                        (slot / n + 1) * height / n);
+                offscreen.drawBitmap(image, from, to, pixelPaint);
+            }
+            assembledBitmap = stitched;
+        }
+
+        void showGrid(boolean show) {
+            grid = show;
+            if (!show) buildSeamlessResult();
+            else clearAssembledBitmap();
+            invalidate();
+        }
 
         /** Keep the PNG and its CRC when changing the size of the grid. */
         void changeGridKeepingPicture(int newN) {
@@ -378,6 +434,7 @@ public final class MainActivity extends Activity {
 
         /** Each tile ID is its position in the original *scrambled* PNG. */
         void reset() {
+            clearAssembledBitmap();
             for (int i=0; i<tiles.length; i++) tiles[i] = i;
             selected = -1;
             grid = true;
@@ -385,6 +442,7 @@ public final class MainActivity extends Activity {
             invalidate();
         }
         void swapWithoutDraw(int a, int b) {
+            if (assembledBitmap != null) { clearAssembledBitmap(); grid = true; }
             int t=tiles[a]; tiles[a]=tiles[b]; tiles[b]=t;
             selected=-1;
         }
@@ -440,6 +498,14 @@ public final class MainActivity extends Activity {
             if (!hasImage()) return;
             float scale=fitScale()*zoom;
             float ox=originX(), oy=originY();
+            if (assembledBitmap != null && !assembledBitmap.isRecycled()) {
+                // Draw ONE composite instead of 10,000 small rectangles.
+                RectF whole = new RectF(ox, oy,
+                        ox + image.getWidth()*scale,
+                        oy + image.getHeight()*scale);
+                canvas.drawBitmap(assembledBitmap, null, whole, bitmapPaint);
+                return;
+            }
             float dw=image.getWidth()*scale/n;
             float dh=image.getHeight()*scale/n;
             int minCol=Math.max(0,(int)Math.floor((0-ox)/dw));
