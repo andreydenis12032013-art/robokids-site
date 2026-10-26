@@ -1,0 +1,16 @@
+plugins { id 'com.android.application' }
+android {
+    namespace 'ru.sector9.puzzlecode'
+    compileSdk 35
+    defaultConfig {
+        applicationId 'ru.sector9.puzzlecode'
+        minSdk 26
+        targetSdk 35
+        versionCode 4
+        versionName '2.1'
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
